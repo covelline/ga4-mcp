@@ -15,12 +15,23 @@
 """Common utilities used by the MCP server."""
 
 from typing import Any, Dict
+import logging
 
 from google.analytics import admin_v1beta, data_v1beta
 from google.api_core.gapic_v1.client_info import ClientInfo
+from google.oauth2.credentials import Credentials
+from google.auth.transport.requests import Request
 from importlib import metadata
 import google.auth
 import proto
+
+# Import config from parent module
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from config import get_config
+
+logger = logging.getLogger(__name__)
 
 
 def _get_package_version_with_fallback():
@@ -44,8 +55,37 @@ _READ_ONLY_ANALYTICS_SCOPE = (
 
 
 def _create_credentials() -> google.auth.credentials.Credentials:
-    """Returns Application Default Credentials with read-only scope."""
-    (credentials, _) = google.auth.default(scopes=[_READ_ONLY_ANALYTICS_SCOPE])
+    """Returns credentials with read-only scope.
+    
+    First tries to use refresh token from config if available,
+    then falls back to Application Default Credentials.
+    """
+    config = get_config()
+    
+    # Try refresh token authentication first
+    if config.has_refresh_token_auth():
+        logger.info("Using refresh token authentication")
+        credentials = Credentials(
+            token=None,  # Will be refreshed
+            refresh_token=config.refresh_token,
+            token_uri=config.get_token_uri(),
+            client_id=config.client_id,
+            client_secret=config.client_secret,
+            scopes=[_READ_ONLY_ANALYTICS_SCOPE]
+        )
+        
+        # Refresh the token to get an access token
+        try:
+            credentials.refresh(Request())
+            logger.info("Successfully refreshed access token")
+        except Exception as e:
+            logger.error(f"Failed to refresh token: {e}")
+            logger.info("Falling back to Application Default Credentials")
+            (credentials, _) = google.auth.default(scopes=[_READ_ONLY_ANALYTICS_SCOPE])
+    else:
+        logger.info("Using Application Default Credentials")
+        (credentials, _) = google.auth.default(scopes=[_READ_ONLY_ANALYTICS_SCOPE])
+    
     return credentials
 
 

@@ -1,0 +1,21 @@
+# Google Analytics API
+google-analytics-data==0.18.19
+google-analytics-admin==0.24.1
+
+# Google Authentication
+google-auth>=2.40.0
+google-auth-oauthlib>=1.0.0
+google-auth-httplib2>=0.2.0
+
+# MCP Server Framework
+mcp[cli]>=1.2.0
+
+# HTTP Client (for API calls)
+httpx>=0.28.1
+
+# Protocol Buffers
+proto-plus>=1.22.0
+protobuf>=4.21.0
+
+# Utilities
+python-dotenv>=1.0.0
