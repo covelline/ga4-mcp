@@ -40,16 +40,9 @@ class Config:
         config = cls()
         
         # Load Google OAuth2 settings
-        refresh_token_path = os.getenv("GOOGLE_REFRESH_TOKEN_PATH")
-        if refresh_token_path:
-            try:
-                with open(refresh_token_path, "r") as f:
-                    config.refresh_token = f.read().strip()
-                logger.info(f"Refresh token loaded from {refresh_token_path}")
-            except FileNotFoundError:
-                logger.warning(f"Refresh token file not found: {refresh_token_path}")
-            except Exception as e:
-                logger.error(f"Error loading refresh token: {e}")
+        refresh_token = os.getenv("GOOGLE_REFRESH_TOKEN")
+        if refresh_token:
+            config.refresh_token = refresh_token
         
         config.client_id = os.getenv("GOOGLE_CLIENT_ID")
         config.client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
