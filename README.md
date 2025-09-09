@@ -1,10 +1,22 @@
 # Google Analytics MCP Server (Experimental)
 
+[![PyPI version](https://img.shields.io/pypi/v/analytics-mcp.svg)](https://pypi.org/project/analytics-mcp/)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![GitHub branch check runs](https://img.shields.io/github/check-runs/googleanalytics/google-analytics-mcp/main)](https://github.com/googleanalytics/google-analytics-mcp/actions?query=branch%3Amain++)
+[![PyPI - Downloads](https://img.shields.io/pypi/dm/analytics-mcp)](https://pypi.org/project/analytics-mcp/)
+[![GitHub stars](https://img.shields.io/github/stars/googleanalytics/google-analytics-mcp?style=social)](https://github.com/googleanalytics/google-analytics-mcp/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/googleanalytics/google-analytics-mcp?style=social)](https://github.com/googleanalytics/google-analytics-mcp/network/members)
+[![YouTube Video Views](https://img.shields.io/youtube/views/PT4wGPxWiRQ)](https://www.youtube.com/watch?v=PT4wGPxWiRQ)
+
 This repo contains the source code for running a local
 [MCP](https://modelcontextprotocol.io) server that interacts with APIs for
 [Google Analytics](https://support.google.com/analytics).
 
-## Tools :hammer_and_wrench:
+Join the discussion and ask questions in the
+[🤖-analytics-mcp channel](https://discord.com/channels/971845904002871346/1398002598665257060)
+on Discord.
+
+## Tools 🛠️
 
 The server uses the
 [Google Analytics Admin API](https://developers.google.com/analytics/devguides/config/admin/v1)
@@ -13,7 +25,7 @@ and
 to provide several
 [Tools](https://modelcontextprotocol.io/docs/concepts/tools) for use with LLMs.
 
-### Retrieve account and property information :orange_circle:
+### Retrieve account and property information 🟠
 
 - `get_account_summaries`: Retrieves information about the user's Google
   Analytics accounts and properties.
@@ -21,18 +33,24 @@ to provide several
 - `list_google_ads_links`: Returns a list of links to Google Ads accounts for
   a property.
 
-### Run core reports :orange_book:
+### Run core reports 📙
 
 - `run_report`: Runs a Google Analytics report using the Data API.
 - `get_custom_dimensions_and_metrics`: Retrieves the custom dimensions and
   metrics for a specific property.
 
-### Run realtime reports :hourglass_flowing_sand:
+### Run realtime reports ⏳
 
 - `run_realtime_report`: Runs a Google Analytics realtime report using the
   Data API.
 
-## Setup instructions
+## Setup instructions 🔧
+
+✨ Watch the [Google Analytics MCP Setup
+Tutorial](https://youtu.be/nS8HLdwmVlY) on YouTube for a step-by-step
+walkthrough of these instructions.
+
+[![Watch the video](https://img.youtube.com/vi/nS8HLdwmVlY/mqdefault.jpg)](https://www.youtube.com/watch?v=nS8HLdwmVlY)
 
 Setup involves the following steps:
 
@@ -40,11 +58,11 @@ Setup involves the following steps:
 1.  Configure credentials for Google Analytics.
 1.  Configure Gemini.
 
-### Configure Python :snake:
+### Configure Python 🐍
 
 [Install pipx](https://pipx.pypa.io/stable/#install-pipx).
 
-### Enable APIs in your project :white_check_mark:
+### Enable APIs in your project ✅
 
 [Follow the instructions](https://support.google.com/googleapi/answer/6158841)
 to enable the following APIs in your Google Cloud project:
@@ -52,7 +70,7 @@ to enable the following APIs in your Google Cloud project:
 * [Google Analytics Admin API](https://console.cloud.google.com/apis/library/analyticsadmin.googleapis.com)
 * [Google Analytics Data API](https://console.cloud.google.com/apis/library/analyticsdata.googleapis.com)
 
-### Configure credentials :key:
+### Configure credentials 🔑
 
 Configure your [Application Default Credentials
 (ADC)](https://cloud.google.com/docs/authentication/provide-credentials-adc).
@@ -88,41 +106,26 @@ Here are some sample `gcloud` commands you might find useful:
     --scopes=https://www.googleapis.com/auth/analytics.readonly,https://www.googleapis.com/auth/cloud-platform
   ```
 
+When the `gcloud auth application-default` command completes, copy the
+`PATH_TO_CREDENTIALS_JSON` file location printed to the console in the
+following message. You'll need this for the next step!
+
+```
+Credentials saved to file: [PATH_TO_CREDENTIALS_JSON]
+```
+
 ### Configure Gemini
 
 1.  Install [Gemini
     CLI](https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/index.md)
     or [Gemini Code
-    Assist](https://marketplace.visualstudio.com/items?itemName=Google.geminicodeassist)
+    Assist](https://marketplace.visualstudio.com/items?itemName=Google.geminicodeassist).
 
 1.  Create or edit the file at `~/.gemini/settings.json`, adding your server
     to the `mcpServers` list.
 
-    ```json
-    {
-      "mcpServers": {
-        "analytics-mcp": {
-          "command": "pipx",
-          "args": [
-            "run",
-            "--spec",
-            "git+https://github.com/googleanalytics/google-analytics-mcp.git",
-            "google-analytics-mcp"
-          ]
-        }
-      }
-    }
-    ```
-
-1.  **Optional:** Configure the `GOOGLE_APPLICATION_CREDENTIALS` environment
-    variable in Gemini settings. You may want to do this if you always want to
-    use a specific set of credentials, regardless of which Application Default
-    Credentials are selected in your current environment.
-
-    In `~/.gemini/settings.json`, add a `GOOGLE_APPLICATION_CREDENTIALS`
-    attribute to the `env` object. Replace `PATH_TO_ADC_JSON` in the following
-    example with the full path to the ADC JSON file you always want to use for
-    your MCP server.
+    Replace `PATH_TO_CREDENTIALS_JSON` with the path you copied in the previous
+    step.
 
     We also recommend that you add a `GOOGLE_CLOUD_PROJECT` attribute to the
     `env` object. Replace `YOUR_PROJECT_ID` in the following example with the
@@ -136,20 +139,18 @@ Here are some sample `gcloud` commands you might find useful:
           "command": "pipx",
           "args": [
             "run",
-            "--spec",
-            "git+https://github.com/googleanalytics/google-analytics-mcp.git",
-            "google-analytics-mcp"
+            "analytics-mcp"
           ],
           "env": {
-            "GOOGLE_APPLICATION_CREDENTIALS": "PATH_TO_ADC_JSON",
-            "GOOGLE_CLOUD_PROJECT": "YOUR_PROJECT_ID"
+            "GOOGLE_APPLICATION_CREDENTIALS": "PATH_TO_CREDENTIALS_JSON",
+            "GOOGLE_PROJECT_ID": "YOUR_PROJECT_ID"
           }
         }
       }
     }
     ```
 
-## Try it out :lab_coat:
+## Try it out 🥼
 
 Launch Gemini Code Assist or Gemini CLI and type `/mcp`. You should see
 `analytics-mcp` listed in the results.
@@ -186,6 +187,6 @@ Here are some sample prompts to get you started:
   what are the custom dimensions and custom metrics in my property?
   ```
 
-## Contributing
+## Contributing ✨
 
 Contributions welcome! See the [Contributing Guide](CONTRIBUTING.md).
